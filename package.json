@@ -22,7 +22,8 @@
     "client": "cd client && npm start",
     "storybook": "cd client && npm run storybook",
     "build": "cd client && npm run build && npm run build-storybook",
-    "start": "node server.js"
+    "start": "node server.js",
+    "postinstall": "cd client && npm install"
   },
   "repository": {
     "type": "git",
