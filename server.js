@@ -1,6 +1,9 @@
 require("dotenv").config();
 
 const express = require("express");
+
+const path = require("path");
+
 const {
   getPassword,
   setPassword,
@@ -71,6 +74,17 @@ app.post("/api/passwords", async (request, response) => {
       .status(500)
       .send("An unexpected error occured. Please try again later!");
   }
+});
+
+app.use(express.static(path.join(__dirname, "client/build")));
+
+app.use(
+  "/storybook",
+  express.static(path.join(__dirname, "client/storybook-static"))
+);
+
+app.get("*", (request, response) => {
+  response.sendFile(path.join(__dirname, "client/build", "index.html"));
 });
 
 async function run() {
