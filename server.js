@@ -1,7 +1,12 @@
 require("dotenv").config();
 
 const express = require("express");
-const { getPassword, setPassword } = require("./lib/passwords");
+const {
+  getPassword,
+  setPassword,
+  getPasswords,
+  deletePassword,
+} = require("./lib/passwords");
 const { connect } = require("./lib/database");
 
 const app = express();
@@ -25,7 +30,36 @@ app.get("/api/passwords/:name", async (request, response) => {
   }
 });
 
-app.post("/api/passwords/", async (request, response) => {
+app.delete("/api/passwords/:name", async (request, response) => {
+  const { name } = request.params;
+  try {
+    const deleted = await deletePassword(name);
+    if (deleted.deletedCount === 0) {
+      response
+        .status(404)
+        .send("Could not find the password you have specified");
+      return;
+    }
+    response.json("Password deleted");
+  } catch (error) {
+    console.error(error);
+    response.status(500).send("An internal server error occured");
+  }
+});
+
+app.get("/api/passwords", async (request, response) => {
+  try {
+    const passwords = await getPasswords();
+    response.json(passwords);
+  } catch (error) {
+    console.error(error);
+    response
+      .status(500)
+      .send("An unexpected error occured. Please try again later!");
+  }
+});
+
+app.post("/api/passwords", async (request, response) => {
   const password = request.body;
 
   try {
